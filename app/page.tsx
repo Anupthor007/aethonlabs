@@ -1,65 +1,184 @@
-import Image from "next/image";
+"use client";
+
+import { motion } from "framer-motion";
+import { TypeAnimation } from "react-type-animation";
+import { useState } from "react";
+import ConstructionModal from "@/components/ConstructionModal";
 
 export default function Home() {
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="relative min-h-[100dvh] overflow-hidden bg-[#050505] text-white">
+      <ConstructionModal open={open} setOpen={setOpen} />
+
+      {/* Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_35%)]" />
+
+      {/* Grid */}
+      <div className="absolute inset-0 opacity-[0.03]">
+        <div className="h-full w-full bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:70px_70px]" />
+      </div>
+
+      {/* Navbar */}
+      <header className="fixed top-0 z-40 w-full px-4 pt-4 sm:px-6">
+        <div className="mx-auto flex max-w-6xl items-center justify-between rounded-full border border-white/10 bg-white/[0.04] px-4 py-3 backdrop-blur-2xl sm:px-6 sm:py-4">
+          <div className="text-[12px] font-semibold tracking-[0.28em] text-white sm:text-[15px] sm:tracking-[0.35em]">
+            AETHON LABS
+          </div>
+
+          <nav className="hidden items-center gap-6 md:flex lg:gap-10">
+            <button
+              onClick={handleClick}
+              className="text-sm font-medium text-sky-300 transition hover:text-white"
+            >
+              Systems
+            </button>
+
+            <button
+              onClick={handleClick}
+              className="text-sm font-medium text-violet-300 transition hover:text-white"
+            >
+              Experiments
+            </button>
+
+            <button
+              onClick={handleClick}
+              className="text-sm font-medium text-zinc-300 transition hover:text-white"
+            >
+              Research
+            </button>
+
+            <a
+              href="https://www.linkedin.com/in/anup-thorat-44a079286/"
+              target="_blank"
+              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-white backdrop-blur-xl transition-all duration-300 hover:bg-white/10 sm:px-5 sm:text-sm"
+            >
+              Connect Us
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="relative flex min-h-[100dvh] items-center justify-center px-4 pb-10 pt-28 sm:px-6 sm:pt-32">
+        
+        {/* orb */}
+        <motion.div
+          animate={{
+            y: [0, -30, 0],
+          }}
+          transition={{
+            duration: 7,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute hidden h-[320px] w-[320px] rounded-full bg-white/[0.07] blur-3xl sm:block md:h-[500px] md:w-[500px]"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+
+        {/* Hero Card */}
+        <motion.div
+          initial={{ opacity: 0, filter: "blur(20px)", y: 40 }}
+          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+          transition={{ duration: 1.2 }}
+          className="relative z-10 w-full max-w-5xl overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03] px-5 py-12 backdrop-blur-3xl sm:rounded-[42px] sm:px-10 md:max-w-6xl md:px-16 md:py-24"
+        >
+          {/* subtle gradient */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_45%)]" />
+
+          <div className="relative z-10 text-center">
+            
+            {/* Typewriter */}
+            <div className="mb-8 inline-flex max-w-full rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-center text-xs font-medium text-zinc-300 sm:mb-10 sm:px-6 sm:py-3 sm:text-sm">
+              <TypeAnimation
+                sequence={[
+                  "Initializing Neural Systems...",
+                  2000,
+                  "Connecting Autonomous Agents...",
+                  2000,
+                  "Building Future Interfaces...",
+                  2000,
+                ]}
+                wrapper="span"
+                speed={65}
+                repeat={Infinity}
+              />
+            </div>
+
+            {/* Heading */}
+            <motion.h1
+              initial={{ opacity: 0, filter: "blur(12px)", y: 20 }}
+              animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+              transition={{ delay: 0.3, duration: 1 }}
+              className="mx-auto max-w-4xl text-3xl font-semibold leading-[1.08] tracking-[-0.045em] text-white sm:text-5xl md:text-6xl lg:text-[92px]"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              <span className="block whitespace-nowrap">Autonomous Intelligence</span>
+              <span className="mt-1 block sm:mt-2 md:mt-3">Designed For The Next Era.</span>
+            </motion.h1>
+
+            {/* Paragraph */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 1 }}
+              className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 sm:mt-10 sm:text-lg sm:leading-[1.8] md:text-xl"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+              Aethon Labs builds intelligent systems, experimental interfaces,
+              and next-generation digital experiences engineered for the future.
+            </motion.p>
+
+            {/* Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 1 }}
+              className="mt-10 flex flex-col items-stretch justify-center gap-4 sm:mt-14 sm:flex-row sm:items-center sm:gap-5"
+            >
+              <button
+                onClick={handleClick}
+                className="w-full rounded-2xl bg-white px-7 py-4 text-base font-semibold text-black shadow-2xl shadow-white/10 transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] sm:w-auto sm:px-9 sm:text-lg"
+              >
+                Enter Laboratory
+              </button>
+
+              <button
+                onClick={handleClick}
+                className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-7 py-4 text-base font-semibold text-white backdrop-blur-xl transition-all duration-300 hover:scale-[1.03] hover:bg-white/[0.08] active:scale-[0.98] sm:w-auto sm:px-9 sm:text-lg"
+              >
+                Explore Systems
+              </button>
+            </motion.div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-white/10 px-4 py-8 sm:px-6 sm:py-10">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 md:flex-row">
+          
+          <div>
+            <h3 className="text-lg font-semibold text-white">
+              Aethon Labs
+            </h3>
+
+            <p className="mt-2 text-sm text-zinc-500">
+              Designed & Developed by Anup Thorat
+            </p>
+          </div>
+
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href="https://www.linkedin.com/in/anup-thorat-44a079286/"
             target="_blank"
-            rel="noopener noreferrer"
+            className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-white/[0.08]"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+            Connect on LinkedIn
           </a>
         </div>
-      </main>
-    </div>
+      </footer>
+    </main>
   );
 }
