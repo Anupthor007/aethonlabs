@@ -7,7 +7,7 @@ html {
 
 body {
   font-family: 'SF Pro Display', sans-serif;
-  background: #050505;
+  background: radial-gradient(circle at 20% 10%, #12355f 0%, #0b1221 42%, #05070d 100%);
   color: white;
   min-height: 100dvh;
   overflow-x: hidden;
