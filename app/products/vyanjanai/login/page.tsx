@@ -40,7 +40,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/products/vyanjanai");
+    router.push("/products/vyanjanai/chat");
   };
 
   return (
