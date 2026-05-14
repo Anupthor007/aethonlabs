@@ -1,183 +1,208 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import {
-  SendIcon,
-  LoaderIcon,
-  Sparkles,
-} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
 
-interface UseAutoResizeTextareaProps {
-  minHeight: number;
-  maxHeight?: number;
-}
+import { LoaderIcon, SendIcon } from "lucide-react";
 
-function useAutoResizeTextarea({
-  minHeight,
-  maxHeight,
-}: UseAutoResizeTextareaProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+import ChatMessageBubble from "@/components/vyanjanai/chat-message";
 
-  const adjustHeight = useCallback(
-    (reset?: boolean) => {
-      const textarea = textareaRef.current;
-
-      if (!textarea) return;
-
-      if (reset) {
-        textarea.style.height = `${minHeight}px`;
-        return;
-      }
-
-      textarea.style.height = `${minHeight}px`;
-
-      const newHeight = Math.max(
-        minHeight,
-        Math.min(
-          textarea.scrollHeight,
-          maxHeight ?? Number.POSITIVE_INFINITY
-        )
-      );
-
-      textarea.style.height = `${newHeight}px`;
-    },
-    [minHeight, maxHeight]
-  );
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-
-    if (textarea) {
-      textarea.style.height = `${minHeight}px`;
-    }
-  }, [minHeight]);
-
-  return { textareaRef, adjustHeight };
-}
+import { ChatMessage } from "@/types/chat";
 
 export function AnimatedAIChat() {
-  const [value, setValue] = useState("");
+  const [input, setInput] = useState("");
+
   const [isTyping, setIsTyping] = useState(false);
 
-  const { textareaRef, adjustHeight } =
-    useAutoResizeTextarea({
-      minHeight: 60,
-      maxHeight: 200,
-    });
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: "welcome",
+      role: "assistant",
+      content:
+        "Namaste 🙏\n\nI am VyanjanAI.\n\nTell me ingredients you have, and I’ll create unique Indian recipes for you.",
+    },
+  ]);
 
-  const handleSendMessage = () => {
-    if (!value.trim()) return;
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages, isTyping]);
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+
+    const userMessage: ChatMessage = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: input,
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+
+    const currentInput = input;
+
+    setInput("");
 
     setIsTyping(true);
 
-    setTimeout(() => {
-      setIsTyping(false);
-      setValue("");
-      adjustHeight(true);
-    }, 2000);
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          message: currentInput,
+        }),
+      });
+
+      const data = await response.json();
+
+      const aiMessage: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content:
+          data.reply ||
+          "Something went wrong.",
+      };
+
+      setMessages((prev) => [
+        ...prev,
+        aiMessage,
+      ]);
+    } catch (error) {
+      const errorMessage: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content:
+          "Failed to connect with VyanjanAI.",
+      };
+
+      setMessages((prev) => [
+        ...prev,
+        errorMessage,
+      ]);
+    }
+
+    setIsTyping(false);
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white px-6 relative overflow-hidden">
+    <div className="h-screen bg-black text-white flex flex-col">
 
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-[120px]" />
+      <div className="border-b border-zinc-900 px-6 py-5">
+        <h1 className="text-2xl font-bold">
+          VyanjanAI
+        </h1>
 
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-yellow-500/10 rounded-full blur-[120px]" />
+        <p className="text-sm text-zinc-500 mt-1">
+          Indian AI Recipe Laboratory
+        </p>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative z-10 w-full max-w-3xl"
-      >
-        <div className="text-center mb-10">
+      <div className="flex-1 overflow-y-auto px-6 py-8">
 
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-orange-400" />
+        <div className="max-w-4xl mx-auto space-y-6">
 
-            <span className="text-orange-400 text-sm tracking-widest uppercase">
-              Indian AI Recipe Laboratory
-            </span>
-          </div>
+          {messages.map((message) => (
+            <ChatMessageBubble
+              key={message.id}
+              message={message}
+            />
+          ))}
 
-          <h1 className="text-5xl md:text-6xl font-bold">
-            VyanjanAI
-          </h1>
+          <AnimatePresence>
+            {isTyping && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-3 text-zinc-400"
+              >
+                <LoaderIcon className="w-4 h-4 animate-spin" />
 
-          <p className="mt-4 text-zinc-400 text-lg">
-            Discover unique Indian recipes from your ingredients
-          </p>
-        </div>
-
-        <div className="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-3xl p-4 shadow-2xl">
-
-          <textarea
-            ref={textareaRef}
-            value={value}
-            onChange={(e) => {
-              setValue(e.target.value);
-              adjustHeight();
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSendMessage();
-              }
-            }}
-            placeholder="Try: Paneer, rice and curd..."
-            className={cn(
-              "w-full resize-none bg-transparent outline-none border-none",
-              "text-white placeholder:text-zinc-500",
-              "text-lg p-4 min-h-[80px]"
+                <span>
+                  VyanjanAI is preparing recipes...
+                </span>
+              </motion.div>
             )}
-          />
+          </AnimatePresence>
 
-          <div className="flex items-center justify-between mt-4">
+          <div ref={bottomRef} />
+        </div>
+      </div>
 
-            <div className="text-sm text-zinc-500">
-              Indian recipes only
+      <div className="border-t border-zinc-900 p-6">
+
+        <div className="max-w-4xl mx-auto">
+
+          <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-4">
+
+            <textarea
+              value={input}
+              onChange={(e) =>
+                setInput(e.target.value)
+              }
+              placeholder="Try: Paneer, curd and rice..."
+              className="
+                w-full
+                bg-transparent
+                outline-none
+                resize-none
+                min-h-[80px]
+                text-white
+                placeholder:text-zinc-500
+              "
+              onKeyDown={(e) => {
+                if (
+                  e.key === "Enter" &&
+                  !e.shiftKey
+                ) {
+                  e.preventDefault();
+
+                  handleSend();
+                }
+              }}
+            />
+
+            <div className="flex justify-between items-center mt-4">
+
+              <div className="text-sm text-zinc-500">
+                Unique Indian recipes only
+              </div>
+
+              <button
+                onClick={handleSend}
+                disabled={!input.trim() || isTyping}
+                className="
+                  bg-orange-500
+                  hover:bg-orange-400
+                  transition-colors
+                  text-black
+                  px-5
+                  py-3
+                  rounded-2xl
+                  flex
+                  items-center
+                  gap-2
+                  disabled:opacity-50
+                "
+              >
+                <SendIcon className="w-4 h-4" />
+
+                <span>Send</span>
+              </button>
             </div>
 
-            <button
-              onClick={handleSendMessage}
-              disabled={!value.trim() || isTyping}
-              className={cn(
-                "flex items-center gap-2 px-5 py-3 rounded-2xl transition-all",
-                value.trim()
-                  ? "bg-orange-500 hover:bg-orange-400 text-black"
-                  : "bg-zinc-800 text-zinc-500"
-              )}
-            >
-              {isTyping ? (
-                <LoaderIcon className="w-4 h-4 animate-spin" />
-              ) : (
-                <SendIcon className="w-4 h-4" />
-              )}
-
-              <span>Send</span>
-            </button>
           </div>
         </div>
-
-        <AnimatePresence>
-          {isTyping && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="mt-6 text-center text-zinc-400"
-            >
-              VyanjanAI is preparing recipes...
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { ArrowRight, Orbit, Sparkles } from "lucide-react";
 import { TypeAnimation } from "react-type-animation";
 
 import ConstructionModal from "@/components/ConstructionModal";
-import { DotGlobeHero } from "@/components/ui/globe-hero";
+import { DotGlobeHero } from "@/components/landing/globe-hero";
 
 export default function DotGlobeHeroDemo() {
   const [open, setOpen] = useState(false);

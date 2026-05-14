@@ -1,6 +1,6 @@
 "use client";
 
-import Hero from "@/components/ui/animated-shader-hero";
+import Hero from "@/components/landing/animated-shader-hero";
 
 // Demo Component showing how to use the Hero
 const HeroDemo: React.FC = () => {
