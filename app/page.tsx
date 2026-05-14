@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Hero from "@/components/ui/animated-shader-hero";
+import Hero from "@/components/landing/animated-shader-hero";
 import ConstructionModal from "@/components/ConstructionModal";
 
 export default function HomePage() {
