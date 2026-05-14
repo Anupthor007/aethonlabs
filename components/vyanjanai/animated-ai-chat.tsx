@@ -366,16 +366,10 @@ export function AnimatedAIChat() {
       <div className="hidden md:flex">
         <ChatSidebar
           conversations={conversations}
-          activeConversationId={
-            activeConversationId
-          }
-          onSelectConversation={(id) =>
-            setActiveConversationId(id)
-          }
+          activeConversationId={activeConversationId}
+          onSelectConversation={(id) => setActiveConversationId(id)}
           onNewChat={handleNewChat}
-          onDeleteConversation={
-            handleDeleteConversation
-          }
+          onDeleteConversation={handleDeleteConversation}
         />
       </div>
 
@@ -398,17 +392,13 @@ export function AnimatedAIChat() {
             <div className="h-[calc(100vh-88px)] overflow-y-auto">
               <ChatSidebar
                 conversations={conversations}
-                activeConversationId={
-                  activeConversationId
-                }
+                activeConversationId={activeConversationId}
                 onSelectConversation={(id) => {
                   setActiveConversationId(id);
                   setShowSidebar(false);
                 }}
                 onNewChat={handleNewChat}
-                onDeleteConversation={
-                  handleDeleteConversation
-                }
+                onDeleteConversation={handleDeleteConversation}
               />
             </div>
           </div>
@@ -418,10 +408,8 @@ export function AnimatedAIChat() {
       <div className="flex-1 flex flex-col">
 
         <div className="border-b border-zinc-900 px-6 py-5">
-
-            <div className="max-w-5xl mx-auto flex items-center justify-between">
-
-              {/* Mobile menu button */}
+          <div className="max-w-5xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
               <div className="md:hidden mr-2">
                 <button
                   onClick={() => setShowSidebar(true)}
@@ -430,161 +418,81 @@ export function AnimatedAIChat() {
                   <MenuIcon className="w-5 h-5" />
                 </button>
               </div>
-            <div>
-              <h1 className="text-2xl font-bold">
-                VyanjanAI
-              </h1>
 
-              <p className="text-sm text-zinc-500 mt-1">
-                Indian AI Recipe Laboratory
-              </p>
+              <div>
+                <h1 className="text-2xl font-bold">VyanjanAI</h1>
+                <p className="text-sm text-zinc-500 mt-1">Indian AI Recipe Laboratory</p>
+              </div>
             </div>
 
-            </div>
-
-            <div className="max-w-5xl mx-auto flex items-center justify-between mt-3 md:mt-0">
-              <div />
-
-              <button
+            <button
               onClick={handleLogout}
-              className="
-                flex
-                items-center
-                gap-2
-                bg-zinc-900
-                border
-                border-zinc-800
-                hover:border-orange-500
-                transition-all
-                px-4
-                py-2
-                rounded-2xl
-                text-sm
-              "
+              className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 hover:border-orange-500 transition-all px-4 py-2 rounded-2xl text-sm"
             >
               <LogOutIcon className="w-4 h-4" />
-
               <span>Logout</span>
             </button>
-
-            </div>
-
+          </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-8">
-
+        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6 md:py-8">
           <div className="max-w-5xl mx-auto space-y-6">
-
             {messages.map((message) => (
-              <ChatMessageBubble
-                key={message.id}
-                message={message}
-              />
+              <ChatMessageBubble key={message.id} message={message} />
             ))}
 
             <AnimatePresence>
               {isTyping && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex items-center gap-3 text-zinc-400"
-                >
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-3 text-zinc-400">
                   <LoaderIcon className="w-4 h-4 animate-spin" />
-
-                  <span>
-                    VyanjanAI is preparing recipes...
-                  </span>
+                  <span>VyanjanAI is preparing recipes...</span>
                 </motion.div>
               )}
             </AnimatePresence>
 
             <div ref={bottomRef} />
-
           </div>
-
         </div>
 
-        <div className="border-t border-zinc-900 p-6">
-
+        <div className="border-t border-zinc-900 p-4 md:p-6">
           <div className="max-w-5xl mx-auto">
+            <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-3 md:p-4">
+              <div className="flex flex-col md:flex-row md:items-end gap-3">
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Try: Paneer, curd and rice..."
+                  className="flex-1 bg-transparent outline-none resize-none min-h-[48px] md:min-h-[80px] text-white placeholder:text-zinc-500"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSend();
+                    }
+                  }}
+                />
 
-            <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-4">
+                <div className="flex flex-col items-end gap-2">
+                  <div className="text-sm text-zinc-500 hidden md:block">Unique Indian recipes only</div>
 
-              <textarea
-                value={input}
-                onChange={(e) =>
-                  setInput(e.target.value)
-                }
-                placeholder="Try: Paneer, curd and rice..."
-                className="
-                  w-full
-                  bg-transparent
-                  outline-none
-                  resize-none
-                  min-h-[80px]
-                  text-white
-                  placeholder:text-zinc-500
-                "
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "Enter" &&
-                    !e.shiftKey
-                  ) {
-                    e.preventDefault();
-
-                    handleSend();
-                  }
-                }}
-              />
-
-              <div className="flex justify-between items-center mt-4">
-
-                <div className="text-sm text-zinc-500">
-                  Unique Indian recipes only
+                  <button
+                    onClick={handleSend}
+                    disabled={!input.trim() || isTyping}
+                    className="bg-orange-500 hover:bg-orange-400 transition-colors text-black px-4 py-2 md:px-5 md:py-3 rounded-2xl flex items-center gap-2 disabled:opacity-50"
+                  >
+                    <SendIcon className="w-4 h-4" />
+                    <span>Send</span>
+                  </button>
                 </div>
-
-                <button
-                  onClick={handleSend}
-                  disabled={
-                    !input.trim() ||
-                    isTyping
-                  }
-                  className="
-                    bg-orange-500
-                    hover:bg-orange-400
-                    transition-colors
-                    text-black
-                    px-5
-                    py-3
-                    rounded-2xl
-                    flex
-                    items-center
-                    gap-2
-                    disabled:opacity-50
-                  "
-                >
-                  <SendIcon className="w-4 h-4" />
-
-                  <span>Send</span>
-                </button>
-
               </div>
 
-              <SuggestedIngredients
-                onSelect={(value) =>
-                  setInput(value)
-                }
-              />
-
+              <div className="mt-3 md:mt-4">
+                <div className="text-sm text-zinc-500 md:hidden mb-2">Unique Indian recipes only</div>
+                <SuggestedIngredients onSelect={(value) => setInput(value)} />
+              </div>
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
   );
 }
