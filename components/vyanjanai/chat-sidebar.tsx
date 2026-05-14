@@ -30,7 +30,7 @@ export default function ChatSidebar({
   onDeleteConversation,
 }: Props) {
   return (
-    <div className="w-[300px] border-r border-zinc-900 bg-black flex flex-col">
+    <div className="w-full md:w-[300px] border-r border-zinc-900 bg-black flex flex-col">
 
       <div className="p-4 border-b border-zinc-900">
 

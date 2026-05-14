@@ -8,6 +8,8 @@ import {
   LoaderIcon,
   SendIcon,
   LogOutIcon,
+  MenuIcon,
+  ChevronLeftIcon,
 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
@@ -26,6 +28,8 @@ import { supabase } from "@/lib/supabase/client";
 
 export function AnimatedAIChat() {
   const router = useRouter();
+
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const [input, setInput] = useState("");
 
@@ -358,26 +362,74 @@ export function AnimatedAIChat() {
   return (
     <div className="h-screen bg-black text-white flex">
 
-      <ChatSidebar
-        conversations={conversations}
-        activeConversationId={
-          activeConversationId
-        }
-        onSelectConversation={(id) =>
-          setActiveConversationId(id)
-        }
-        onNewChat={handleNewChat}
-        onDeleteConversation={
-          handleDeleteConversation
-        }
-      />
+      {/* Sidebar for md+ screens */}
+      <div className="hidden md:flex">
+        <ChatSidebar
+          conversations={conversations}
+          activeConversationId={
+            activeConversationId
+          }
+          onSelectConversation={(id) =>
+            setActiveConversationId(id)
+          }
+          onNewChat={handleNewChat}
+          onDeleteConversation={
+            handleDeleteConversation
+          }
+        />
+      </div>
+
+      {/* Mobile sidebar overlay */}
+      {showSidebar && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setShowSidebar(false)} />
+
+          <div className="relative w-full h-full p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Chats</h2>
+              <button
+                onClick={() => setShowSidebar(false)}
+                className="p-2 rounded-md bg-zinc-900 border border-zinc-800"
+              >
+                <ChevronLeftIcon className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="h-[calc(100vh-88px)] overflow-y-auto">
+              <ChatSidebar
+                conversations={conversations}
+                activeConversationId={
+                  activeConversationId
+                }
+                onSelectConversation={(id) => {
+                  setActiveConversationId(id);
+                  setShowSidebar(false);
+                }}
+                onNewChat={handleNewChat}
+                onDeleteConversation={
+                  handleDeleteConversation
+                }
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex-1 flex flex-col">
 
         <div className="border-b border-zinc-900 px-6 py-5">
 
-          <div className="max-w-5xl mx-auto flex items-center justify-between">
+            <div className="max-w-5xl mx-auto flex items-center justify-between">
 
+              {/* Mobile menu button */}
+              <div className="md:hidden mr-2">
+                <button
+                  onClick={() => setShowSidebar(true)}
+                  className="p-2 rounded-md bg-zinc-900 border border-zinc-800"
+                >
+                  <MenuIcon className="w-5 h-5" />
+                </button>
+              </div>
             <div>
               <h1 className="text-2xl font-bold">
                 VyanjanAI
@@ -388,7 +440,12 @@ export function AnimatedAIChat() {
               </p>
             </div>
 
-            <button
+            </div>
+
+            <div className="max-w-5xl mx-auto flex items-center justify-between mt-3 md:mt-0">
+              <div />
+
+              <button
               onClick={handleLogout}
               className="
                 flex
@@ -410,7 +467,7 @@ export function AnimatedAIChat() {
               <span>Logout</span>
             </button>
 
-          </div>
+            </div>
 
         </div>
 
