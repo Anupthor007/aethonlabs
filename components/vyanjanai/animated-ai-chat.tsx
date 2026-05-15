@@ -73,7 +73,7 @@ export function AnimatedAIChat() {
       const { data: conversationData } =
         await supabase
           .from("conversations")
-          .select("*")
+.select("id, title, created_at")
           .eq("user_id", session.user.id)
           .order("created_at", {
             ascending: false,
@@ -214,11 +214,19 @@ export function AnimatedAIChat() {
   };
 
   const handleDeleteConversation =
-    async (conversationId: string) => {
-      await supabase
+  async (conversationId: string) => {
+    try {
+
+      const { error } = await supabase
         .from("conversations")
         .delete()
         .eq("id", conversationId);
+
+      if (error) {
+        console.error(error);
+
+        return;
+      }
 
       const updatedConversations =
         conversations.filter(
@@ -234,17 +242,31 @@ export function AnimatedAIChat() {
         activeConversationId ===
         conversationId
       ) {
+
         if (
           updatedConversations.length > 0
         ) {
+
           setActiveConversationId(
             updatedConversations[0].id
           );
+
         } else {
-          handleNewChat();
+
+          setMessages([]);
+
+          await handleNewChat();
+
         }
       }
-    };
+
+    } catch (err) {
+      console.error(
+        "Delete failed",
+        err
+      );
+    }
+  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -316,8 +338,9 @@ export function AnimatedAIChat() {
           },
 
           body: JSON.stringify({
-            message: currentInput,
-          }),
+  message: currentInput,
+  messages,
+}),
         }
       );
 
