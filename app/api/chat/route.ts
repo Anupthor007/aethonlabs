@@ -5,10 +5,8 @@ import OpenAI from "openai";
 import { SYSTEM_PROMPT } from "@/prompts/systemPrompt";
 
 const client = new OpenAI({
-  apiKey: process.env.CEREBRAS_API_KEY,
-
-  baseURL:
-    "https://api.cerebras.ai/v1",
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: "https://api.groq.com/openai/v1",
 });
 
 export async function POST(req: Request) {
@@ -41,7 +39,7 @@ export async function POST(req: Request) {
 
     const completion =
       await client.chat.completions.create({
-        model: "glm-4.5-air",
+        model: "llama-3.3-70b-versatile",
 
         messages: formattedMessages,
       });
