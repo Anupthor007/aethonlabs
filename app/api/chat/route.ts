@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
     const completion =
       await client.chat.completions.create({
-        model: "llama3.1-8b",
+        model: "glm-4.5-air",
 
         messages: formattedMessages,
       });
